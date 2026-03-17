@@ -11,16 +11,39 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
 
     <style>
+      :root {
+        --bg-deep: #0b0f19;
+        --panel-bg: rgba(8, 11, 20, 0.28);
+        --panel-border: rgba(255, 255, 255, 0.14);
+        --text-main: #e8ecf6;
+        --text-soft: rgba(232, 236, 246, 0.74);
+        --accent: #ffd700;
+        --accent-soft: rgba(255, 215, 0, 0.14);
+        --shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+      }
+
       html,
       body {
         height: 100%;
         margin: 0;
         font-family: "Montserrat", sans-serif;
-        background: #0b0f19;
-        color: #e8ecf6;
+        background: var(--bg-deep);
+        color: var(--text-main);
+      }
+
+      body {
         overflow: hidden;
+      }
+
+      button,
+      input {
+        font: inherit;
       }
 
       .slideshow-container {
@@ -30,6 +53,15 @@
         z-index: 0;
       }
 
+      .slideshow-container::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at top left, rgba(255, 215, 0, 0.2), transparent 34%),
+          linear-gradient(180deg, rgba(4, 6, 12, 0.18), rgba(4, 6, 12, 0.72));
+      }
+
       .slide {
         position: absolute;
         inset: 0;
@@ -37,140 +69,460 @@
         height: 100%;
         object-fit: cover;
         opacity: 0;
-        transition: opacity 1s ease-in-out;
+        transform: scale(1.03);
+        transition:
+          opacity 1.2s ease-in-out,
+          transform 5s linear;
+      }
+
+      .slide.is-visible {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .toolbar {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 5;
+      }
+
+      .settings-button,
+      .button-secondary,
+      .button-primary {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 999px;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .settings-button:hover,
+      .button-secondary:hover,
+      .button-primary:hover {
+        transform: translateY(-1px);
+      }
+
+      .settings-button {
+        padding: 12px 18px;
+        color: var(--text-main);
+        background: rgba(10, 14, 25, 0.52);
+        backdrop-filter: blur(12px);
       }
 
       .wrap {
-        height: 100%;
+        min-height: 100%;
         display: grid;
         place-items: center;
         text-align: center;
         position: relative;
         z-index: 2;
-        padding: 20px;
+        padding: 24px;
         box-sizing: border-box;
       }
 
       .content {
         position: relative;
         z-index: 3;
-        width: min(1350px, 96vw);
-        padding: 28px 36px;
-        background: rgba(11, 15, 25, 0.42);
-        border-radius: 16px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(2px);
+        width: min(1280px, 96vw);
+        padding: 32px 36px;
+        background: var(--panel-bg);
+        border: 1px solid var(--panel-border);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(4px);
         box-sizing: border-box;
       }
 
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-soft);
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
       .title {
-        font-size: clamp(32px, 6vw, 80px);
+        font-size: clamp(30px, 5vw, 74px);
         font-weight: 600;
-        margin-bottom: 16px;
-        letter-spacing: 2px;
+        margin: 0 0 18px;
+        letter-spacing: 0.04em;
         text-align: left;
       }
 
       .timer {
-        color: #ffd700;
-        font-size: clamp(36px, 8vw, 120px);
+        color: var(--accent);
+        font-size: clamp(24px, 4.8vw, 62px);
         font-weight: 700;
         font-variant-numeric: tabular-nums;
-        line-height: 1.08;
+        line-height: 1.04;
+        text-align: center;
+        white-space: nowrap;
       }
 
       .t-unit {
-        font-size: 0.28em;
+        font-size: 0.19em;
         color: white;
-        opacity: 0.8;
+        opacity: 0.72;
         text-transform: uppercase;
-        letter-spacing: 3px;
+        letter-spacing: 0.14em;
         vertical-align: middle;
       }
 
       .stats {
-        margin-top: 28px;
+        margin-top: 30px;
         display: grid;
         gap: 16px;
       }
 
       .stat-line {
-        font-size: clamp(20px, 2vw, 30px);
-        line-height: 1.4;
+        display: grid;
+        gap: 10px;
+        padding: 18px 22px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        text-align: left;
+        font-size: clamp(18px, 1.7vw, 26px);
+        line-height: 1.35;
         overflow-wrap: anywhere;
       }
 
       .stat-line strong {
-        color: #ffd700;
-        font-size: clamp(26px, 3vw, 42px);
+        color: var(--accent);
+        font-size: clamp(18px, 2.1vw, 28px);
         font-weight: 700;
         font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      .stat-line.is-featured {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.16), rgba(255, 255, 255, 0.06));
+        border-color: rgba(255, 215, 0, 0.22);
+      }
+
+      .stat-line.is-featured strong {
+        font-size: clamp(24px, 3vw, 36px);
       }
 
       .hidden {
-        display: none;
+        display: none !important;
+      }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        z-index: 8;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: rgba(3, 5, 10, 0.7);
+        backdrop-filter: blur(6px);
+      }
+
+      .modal-panel {
+        width: min(760px, 100%);
+        max-height: min(88vh, 900px);
+        overflow: auto;
+        padding: 26px;
+        border-radius: 26px;
+        background: rgba(10, 14, 25, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: var(--shadow);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 22px;
+      }
+
+      .modal-title {
+        margin: 0 0 8px;
+        font-size: clamp(26px, 4vw, 36px);
+      }
+
+      .modal-copy {
+        margin: 0;
+        color: var(--text-soft);
+        line-height: 1.5;
+      }
+
+      .icon-button {
+        width: 42px;
+        height: 42px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 50%;
+        background: transparent;
+        color: var(--text-main);
+        cursor: pointer;
+      }
+
+      .settings-grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .setting-card {
+        padding: 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .setting-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+
+      .setting-card h3 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .setting-card p {
+        margin: 0;
+        color: var(--text-soft);
+        line-height: 1.45;
+      }
+
+      .toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-main);
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .field label {
+        color: var(--text-soft);
+        font-size: 14px;
+      }
+
+      .field input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-main);
+      }
+
+      .range-row,
+      .photo-row,
+      .action-row,
+      .period-list-item {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .range-row {
+        margin-top: 14px;
+      }
+
+      .range-row input,
+      .photo-row input {
+        flex: 1;
+      }
+
+      .photo-row {
+        margin-top: 14px;
+      }
+
+      .period-list,
+      .photo-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .period-list-item {
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .photo-item {
+        display: grid;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .photo-preview {
+        width: 100%;
+        max-height: 140px;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+
+      .period-meta {
+        display: grid;
+        gap: 4px;
+      }
+
+      .period-title {
+        font-weight: 600;
+      }
+
+      .period-subtitle {
+        color: var(--text-soft);
+        font-size: 14px;
+      }
+
+      .button-primary,
+      .button-secondary {
+        padding: 12px 16px;
+      }
+
+      .button-primary {
+        background: var(--accent);
+        border-color: rgba(255, 215, 0, 0.35);
+        color: #131313;
+        font-weight: 700;
+      }
+
+      .button-secondary {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text-main);
+      }
+
+      .action-row {
+        justify-content: flex-end;
+        margin-top: 24px;
+      }
+
+      .empty-state {
+        padding: 16px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-soft);
+      }
+
+      .flatpickr-calendar {
+        background: #101723;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      }
+
+      .flatpickr-day.selected,
+      .flatpickr-day.startRange,
+      .flatpickr-day.endRange,
+      .flatpickr-day.selected.inRange,
+      .flatpickr-day.startRange.inRange,
+      .flatpickr-day.endRange.inRange,
+      .flatpickr-day.selected:focus,
+      .flatpickr-day.startRange:focus,
+      .flatpickr-day.endRange:focus,
+      .flatpickr-day.selected:hover,
+      .flatpickr-day.startRange:hover,
+      .flatpickr-day.endRange:hover {
+        background: #ffd700;
+        border-color: #ffd700;
+        color: #131313;
+      }
+
+      .flatpickr-day.inRange {
+        box-shadow: -5px 0 0 rgba(255, 215, 0, 0.2), 5px 0 0 rgba(255, 215, 0, 0.2);
       }
 
       @media (max-width: 700px) {
+        body {
+          overflow: auto;
+        }
+
+        .toolbar {
+          top: 14px;
+          right: 14px;
+        }
+
+        .wrap {
+          padding: 72px 12px 16px;
+        }
+
         .content {
-          width: min(98vw, 98vw);
-          padding: 20px 16px;
+          width: min(100%, 100%);
+          padding: 22px 18px;
+          border-radius: 22px;
+        }
+
+        .title,
+        .timer {
+          text-align: center;
         }
 
         .stat-line {
-          font-size: 18px;
+          padding: 16px;
         }
 
-        .stat-line strong {
-          font-size: 24px;
-          display: inline-block;
-          margin-top: 6px;
+        .range-row,
+        .photo-row,
+        .action-row,
+        .period-list-item,
+        .setting-header,
+        .modal-header {
+          flex-direction: column;
+          align-items: stretch;
         }
 
-        .t-unit {
-          letter-spacing: 2px;
+        .action-row {
+          justify-content: stretch;
+        }
+
+        .modal {
+          padding: 10px;
+        }
+
+        .modal-panel {
+          padding: 18px;
         }
       }
     </style>
   </head>
   <body>
-    <div class="slideshow-container">
-      <img
-        class="slide"
-        src="florian-wehde-lY87gHWdGNo-unsplash.jpg"
-        alt="Rue animée en Asie du Sud-Est"
-      />
-      <img
-        class="slide"
-        src="giuliano-gabella-S2aZq6yG-b4-unsplash.jpg"
-        alt="Lagune turquoise en Asie du Sud-Est"
-      />
-      <img
-        class="slide"
-        src="guille-alvarez-P11Z-nILhCs-unsplash.jpg"
-        alt="Pêcheur avec filet en Asie du Sud-Est"
-      />
-      <img class="slide" src="guilin.webp" alt="Paysage de Guilin" />
-      <img
-        class="slide"
-        src="china-sunset-on-rice-fields.png"
-        alt="Coucher de soleil sur les rizières en Chine"
-      />
+    <div id="slideshowContainer" class="slideshow-container"></div>
+
+    <div class="toolbar">
+      <button id="openSettings" class="settings-button" type="button">
+        Settings
+      </button>
     </div>
 
     <div class="wrap">
       <div class="content">
-        <div class="title">Année sabbatique dans...</div>
+        <div class="eyebrow">Compte a rebours personnalise</div>
+        <div id="mainTitle" class="title">Annee sabbatique dans...</div>
         <div id="timer" class="timer">--j --h --m --s</div>
 
         <div class="stats">
-          <div class="stat-line">
-            Temps de travail restant avant l’année sabbatique :
+          <div id="workToSabbaticalLine" class="stat-line">
+            Temps de travail restant avant l'annee sabbatique :
             <strong id="worktimeToSabbatical">--</strong>
           </div>
 
           <div class="stat-line">
-            Reste à travailler avant le week-end :
+            Reste a travailler avant le week-end :
             <strong id="weekendWorkCountdown">--</strong>
           </div>
 
@@ -182,25 +534,191 @@
       </div>
     </div>
 
+    <div id="settingsModal" class="modal hidden" aria-hidden="true">
+      <div
+        class="modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settingsTitle"
+      >
+        <div class="modal-header">
+          <div>
+            <h2 id="settingsTitle" class="modal-title">Settings</h2>
+            <p class="modal-copy">
+              Personnalise la date sabbatique et tes periodes de vacances. Les
+              changements sont sauvegardes dans le navigateur.
+            </p>
+          </div>
+          <button
+            id="closeSettings"
+            class="icon-button"
+            type="button"
+            aria-label="Fermer les reglages"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="settings-grid">
+          <section class="setting-card">
+            <div class="setting-header">
+              <div>
+                <h3>Annee sabbatique</h3>
+                <p>
+                  Active ou non une date cible. Si elle est desactivee, la page
+                  met en avant les prochaines vacances.
+                </p>
+              </div>
+              <label class="toggle">
+                <input id="hasSabbaticalInput" type="checkbox" />
+                <span>Activer</span>
+              </label>
+            </div>
+
+            <div id="sabbaticalDateField" class="field">
+              <label for="sabbaticalDateInput">Date de debut</label>
+              <input id="sabbaticalDateInput" type="date" />
+            </div>
+          </section>
+
+          <section class="setting-card">
+            <div class="setting-header">
+              <div>
+                <h3>Periodes de vacances</h3>
+                <p>
+                  Ajoute des periodes de conges avec le calendrier. Elles sont
+                  ensuite prises en compte dans les compteurs.
+                </p>
+              </div>
+            </div>
+
+            <div class="range-row">
+              <input
+                id="vacationRangeInput"
+                type="text"
+                placeholder="Selectionner une periode"
+              />
+              <button id="addVacationPeriod" class="button-primary" type="button">
+                Ajouter
+              </button>
+            </div>
+
+            <div id="periodList" class="period-list"></div>
+          </section>
+
+          <section class="setting-card">
+            <div class="setting-header">
+              <div>
+                <h3>Photos du fond</h3>
+                <p>
+                  Ajoute des URLs ou des chemins d'images du projet pour le
+                  slideshow d'arriere-plan.
+                </p>
+              </div>
+            </div>
+
+            <div class="photo-row">
+              <input
+                id="photoUrlInput"
+                type="text"
+                placeholder="URL ou chemin de l'image"
+              />
+              <input
+                id="photoAltInput"
+                type="text"
+                placeholder="Description optionnelle"
+              />
+              <button id="addPhoto" class="button-primary" type="button">
+                Ajouter
+              </button>
+            </div>
+
+            <div id="photoList" class="photo-list"></div>
+          </section>
+        </div>
+
+        <div class="action-row">
+          <button id="resetDefaults" class="button-secondary" type="button">
+            Reinitialiser
+          </button>
+          <button id="saveSettings" class="button-primary" type="button">
+            Enregistrer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
     <script>
-      const TARGET = new Date(2026, 4, 31, 23, 59, 59);
+      const STORAGE_KEY = "countdown-settings-v1";
       const WORK_END_HOUR = 18;
       const FULL_WORKDAY_MS = 24 * 60 * 60 * 1000;
 
-      const PUBLIC_HOLIDAYS = new Set([
-        "20260406",
-        "20260501",
-        "20260508",
-        "20260514",
-        "20260525",
-      ]);
+      const DEFAULT_SETTINGS = {
+        hasSabbatical: true,
+        sabbaticalDate: "2026-05-31",
+        vacationPeriods: [
+          { start: "20260323", end: "20260327" },
+          { start: "20260330", end: "20260403" },
+          { start: "20260430", end: "20260507" },
+        ],
+        photos: [
+          {
+            src: "florian-wehde-lY87gHWdGNo-unsplash.jpg",
+            alt: "Rue animee en Asie du Sud-Est",
+          },
+          {
+            src: "giuliano-gabella-S2aZq6yG-b4-unsplash.jpg",
+            alt: "Lagune turquoise en Asie du Sud-Est",
+          },
+          {
+            src: "guille-alvarez-P11Z-nILhCs-unsplash.jpg",
+            alt: "Pecheur avec filet en Asie du Sud-Est",
+          },
+          { src: "guilin.webp", alt: "Paysage de Guilin" },
+          {
+            src: "china-sunset-on-rice-fields.png",
+            alt: "Coucher de soleil sur les rizieres en Chine",
+          },
+        ],
+      };
 
-      // Périodes de congés payés posés
-      const VACATION_PERIODS_RAW = [
-        { start: "20260323", end: "20260327" },
-        { start: "20260330", end: "20260403" },
-        { start: "20260430", end: "20260507" },
-      ];
+      const elements = {
+        mainTitle: document.getElementById("mainTitle"),
+        timer: document.getElementById("timer"),
+        workToSabbaticalLine: document.getElementById("workToSabbaticalLine"),
+        worktimeToSabbatical: document.getElementById("worktimeToSabbatical"),
+        weekendWorkCountdown: document.getElementById("weekendWorkCountdown"),
+        vacationLine: document.getElementById("vacationLine"),
+        vacationLabel: document.getElementById("vacationLabel"),
+        vacationCountdown: document.getElementById("vacationCountdown"),
+        slideshowContainer: document.getElementById("slideshowContainer"),
+        settingsModal: document.getElementById("settingsModal"),
+        openSettings: document.getElementById("openSettings"),
+        closeSettings: document.getElementById("closeSettings"),
+        hasSabbaticalInput: document.getElementById("hasSabbaticalInput"),
+        sabbaticalDateField: document.getElementById("sabbaticalDateField"),
+        sabbaticalDateInput: document.getElementById("sabbaticalDateInput"),
+        vacationRangeInput: document.getElementById("vacationRangeInput"),
+        addVacationPeriod: document.getElementById("addVacationPeriod"),
+        periodList: document.getElementById("periodList"),
+        photoUrlInput: document.getElementById("photoUrlInput"),
+        photoAltInput: document.getElementById("photoAltInput"),
+        addPhoto: document.getElementById("addPhoto"),
+        photoList: document.getElementById("photoList"),
+        resetDefaults: document.getElementById("resetDefaults"),
+        saveSettings: document.getElementById("saveSettings"),
+      };
+
+      const state = {
+        settings: loadSettings(),
+        draftSettings: null,
+        vacationPicker: null,
+        slideshowIndex: 0,
+        slideshowTimer: null,
+        holidayCache: new Map(),
+      };
 
       function parseKey(key) {
         const y = Number(key.slice(0, 4));
@@ -209,11 +727,28 @@
         return new Date(y, m, d);
       }
 
+      function parseDateInput(value) {
+        if (!value) {
+          return null;
+        }
+
+        const [year, month, day] = value.split("-").map(Number);
+        return new Date(year, month - 1, day);
+      }
+
       function formatYYYYMMDD(date) {
         const y = date.getFullYear();
         const m = String(date.getMonth() + 1).padStart(2, "0");
         const d = String(date.getDate()).padStart(2, "0");
         return `${y}${m}${d}`;
+      }
+
+      function formatShortFrenchDate(date) {
+        return new Intl.DateTimeFormat("fr-FR", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }).format(date);
       }
 
       function startOfDay(date) {
@@ -234,13 +769,57 @@
         return d;
       }
 
+      function getEasterSunday(year) {
+        const a = year % 19;
+        const b = Math.floor(year / 100);
+        const c = year % 100;
+        const d = Math.floor(b / 4);
+        const e = b % 4;
+        const f = Math.floor((b + 8) / 25);
+        const g = Math.floor((b - f + 1) / 3);
+        const h = (19 * a + b - d - g + 15) % 30;
+        const i = Math.floor(c / 4);
+        const k = c % 4;
+        const l = (32 + 2 * e + 2 * i - h - k) % 7;
+        const m = Math.floor((a + 11 * h + 22 * l) / 451);
+        const month = Math.floor((h + l - 7 * m + 114) / 31);
+        const day = ((h + l - 7 * m + 114) % 31) + 1;
+        return new Date(year, month - 1, day);
+      }
+
+      function getFrenchPublicHolidaysForYear(year) {
+        if (state.holidayCache.has(year)) {
+          return state.holidayCache.get(year);
+        }
+
+        const easterSunday = getEasterSunday(year);
+        const holidays = new Set([
+          `${year}0101`,
+          `${year}0501`,
+          `${year}0508`,
+          `${year}0714`,
+          `${year}0815`,
+          `${year}1101`,
+          `${year}1111`,
+          `${year}1225`,
+          formatYYYYMMDD(addDays(easterSunday, 1)),
+          formatYYYYMMDD(addDays(easterSunday, 39)),
+          formatYYYYMMDD(addDays(easterSunday, 50)),
+        ]);
+
+        state.holidayCache.set(year, holidays);
+        return holidays;
+      }
+
       function isWeekend(date) {
         const day = date.getDay();
         return day === 0 || day === 6;
       }
 
       function isHoliday(date) {
-        return PUBLIC_HOLIDAYS.has(formatYYYYMMDD(date));
+        return getFrenchPublicHolidaysForYear(date.getFullYear()).has(
+          formatYYYYMMDD(date)
+        );
       }
 
       function isNaturallyNonWorkingDay(date) {
@@ -262,24 +841,121 @@
         return set;
       }
 
-      const PERSONAL_LEAVES_RAW = buildPersonalLeavesSet(VACATION_PERIODS_RAW);
+      function sortPeriods(periods) {
+        return [...periods].sort((a, b) => a.start.localeCompare(b.start));
+      }
 
-      function isBusinessDay(date) {
-        const key = formatYYYYMMDD(date);
-        return (
-          !isWeekend(date) &&
-          !PUBLIC_HOLIDAYS.has(key) &&
-          !PERSONAL_LEAVES.has(key)
+      function normalizePeriods(periods) {
+        if (!Array.isArray(periods)) {
+          return [];
+        }
+
+        return sortPeriods(
+          periods
+            .filter(
+              (period) =>
+                period &&
+                typeof period.start === "string" &&
+                typeof period.end === "string" &&
+                /^\d{8}$/.test(period.start) &&
+                /^\d{8}$/.test(period.end) &&
+                period.start <= period.end
+            )
+            .map((period) => ({ start: period.start, end: period.end }))
         );
       }
 
-      function periodPaidLeaveDays(period) {
+      function normalizeSettings(raw) {
+        const safe = raw && typeof raw === "object" ? raw : {};
+        const hasSabbatical =
+          typeof safe.hasSabbatical === "boolean"
+            ? safe.hasSabbatical
+            : DEFAULT_SETTINGS.hasSabbatical;
+        const sabbaticalDate =
+          typeof safe.sabbaticalDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(safe.sabbaticalDate)
+            ? safe.sabbaticalDate
+            : DEFAULT_SETTINGS.sabbaticalDate;
+        const vacationPeriods = normalizePeriods(
+          safe.vacationPeriods || DEFAULT_SETTINGS.vacationPeriods
+        );
+        const photos = Array.isArray(safe.photos)
+          ? safe.photos
+              .filter(
+                (photo) =>
+                  photo &&
+                  typeof photo.src === "string" &&
+                  photo.src.trim().length > 0
+              )
+              .map((photo) => ({
+                src: photo.src.trim(),
+                alt:
+                  typeof photo.alt === "string" && photo.alt.trim()
+                    ? photo.alt.trim()
+                    : "Photo de fond",
+              }))
+          : DEFAULT_SETTINGS.photos;
+
+        return {
+          hasSabbatical,
+          sabbaticalDate,
+          vacationPeriods,
+          photos: photos.length ? photos : DEFAULT_SETTINGS.photos,
+        };
+      }
+
+      function loadSettings() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            return normalizeSettings(DEFAULT_SETTINGS);
+          }
+
+          return normalizeSettings(JSON.parse(raw));
+        } catch (error) {
+          return normalizeSettings(DEFAULT_SETTINGS);
+        }
+      }
+
+      function saveSettings(settings) {
+        const normalized = normalizeSettings(settings);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+        state.settings = normalized;
+      }
+
+      function getTargetDate(settings) {
+        const base = parseDateInput(settings.sabbaticalDate);
+        if (!base) {
+          return null;
+        }
+
+        base.setHours(23, 59, 59, 999);
+        return base;
+      }
+
+      function createDerivedData(settings) {
+        const rawLeaves = buildPersonalLeavesSet(settings.vacationPeriods);
+        const blocks = mergeContinuousVacationPeriods(settings.vacationPeriods, rawLeaves);
+
+        return {
+          target: settings.hasSabbatical ? getTargetDate(settings) : null,
+          vacationBlocks: blocks,
+          personalLeaves: buildPersonalLeavesSet(blocks),
+          personalLeavesRaw: rawLeaves,
+        };
+      }
+
+      function isBusinessDay(date, personalLeaves) {
+        const key = formatYYYYMMDD(date);
+        return !isWeekend(date) && !isHoliday(date) && !personalLeaves.has(key);
+      }
+
+      function periodPaidLeaveDays(period, personalLeavesRaw) {
         let count = 0;
         const start = parseKey(period.start);
         const end = parseKey(period.end);
 
         for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-          if (PERSONAL_LEAVES_RAW.has(formatYYYYMMDD(d))) {
+          if (personalLeavesRaw.has(formatYYYYMMDD(d))) {
             count++;
           }
         }
@@ -304,32 +980,31 @@
         return true;
       }
 
-      function mergeContinuousVacationPeriods(periods) {
-        if (!periods.length) return [];
+      function mergeContinuousVacationPeriods(periods, personalLeavesRaw) {
+        if (!periods.length) {
+          return [];
+        }
 
-        const sorted = [...periods].sort((a, b) =>
-          a.start.localeCompare(b.start)
-        );
-
+        const sorted = sortPeriods(periods);
         const merged = [];
         let current = {
           start: sorted[0].start,
           end: sorted[0].end,
-          paidLeaveDays: periodPaidLeaveDays(sorted[0]),
+          paidLeaveDays: periodPaidLeaveDays(sorted[0], personalLeavesRaw),
         };
 
-        for (let i = 1; i < sorted.length; i++) {
-          const next = sorted[i];
+        for (let index = 1; index < sorted.length; index++) {
+          const next = sorted[index];
 
           if (onlyNaturallyNonWorkingDaysBetween(current.end, next.start)) {
             current.end = next.end > current.end ? next.end : current.end;
-            current.paidLeaveDays += periodPaidLeaveDays(next);
+            current.paidLeaveDays += periodPaidLeaveDays(next, personalLeavesRaw);
           } else {
             merged.push(current);
             current = {
               start: next.start,
               end: next.end,
-              paidLeaveDays: periodPaidLeaveDays(next),
+              paidLeaveDays: periodPaidLeaveDays(next, personalLeavesRaw),
             };
           }
         }
@@ -337,13 +1012,6 @@
         merged.push(current);
         return merged;
       }
-
-      const VACATION_BLOCKS = mergeContinuousVacationPeriods(
-        VACATION_PERIODS_RAW
-      );
-
-      // Jours réellement non travaillés utilisés pour le calcul métier global
-      const PERSONAL_LEAVES = buildPersonalLeavesSet(VACATION_BLOCKS);
 
       function formatDuration(ms) {
         if (ms <= 0) {
@@ -359,15 +1027,12 @@
         return `${days} ${days > 1 ? "jours" : "jour"} ${String(hours).padStart(
           2,
           "0"
-        )}h ${String(minutes).padStart(2, "0")}m ${String(seconds).padStart(
-          2,
-          "0"
-        )}s`;
+        )}h ${String(minutes).padStart(2, "0")}m ${String(seconds).padStart(2, "0")}s`;
       }
 
       function formatMainCountdown(ms) {
         if (ms <= 0) {
-          return `0 <span class="t-unit">jours</span> 00 <span class="t-unit">heures</span><br/>00 <span class="t-unit">minutes</span> 00 <span class="t-unit">secondes</span>`;
+          return `0 <span class="t-unit">jours</span> 00 <span class="t-unit">heures</span> 00 <span class="t-unit">minutes</span> 00 <span class="t-unit">secondes</span>`;
         }
 
         const totalSeconds = Math.floor(ms / 1000);
@@ -376,31 +1041,33 @@
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
 
-        return `${days} <span class="t-unit">jours</span> ${String(
-          hours
-        ).padStart(2, "0")} <span class="t-unit">heures</span><br/>${String(
-          minutes
-        ).padStart(2, "0")} <span class="t-unit">minutes</span> ${String(
-          seconds
-        ).padStart(2, "0")} <span class="t-unit">secondes</span>`;
+        return `${days} <span class="t-unit">jours</span> ${String(hours).padStart(
+          2,
+          "0"
+        )} <span class="t-unit">heures</span> ${String(minutes).padStart(
+          2,
+          "0"
+        )} <span class="t-unit">minutes</span> ${String(seconds).padStart(
+          2,
+          "0"
+        )} <span class="t-unit">secondes</span>`;
       }
 
-      function getLastWorkingMomentBeforeDate(date) {
+      function getLastWorkingMomentBeforeDate(date, personalLeaves) {
         const d = startOfDay(date);
         d.setDate(d.getDate() - 1);
 
         while (true) {
-          if (isBusinessDay(d)) {
+          if (isBusinessDay(d, personalLeaves)) {
             return endOfWorkday(d);
           }
           d.setDate(d.getDate() - 1);
         }
       }
 
-      function getNextVacationInfo(now = new Date()) {
-        for (const block of VACATION_BLOCKS) {
+      function getNextVacationInfo(now, vacationBlocks, personalLeaves) {
+        for (const block of vacationBlocks) {
           const start = parseKey(block.start);
-          const end = parseKey(block.end);
 
           if (startOfDay(start) <= now) {
             continue;
@@ -408,9 +1075,8 @@
 
           return {
             start,
-            end,
             days: block.paidLeaveDays,
-            lastWorkingMoment: getLastWorkingMomentBeforeDate(start),
+            lastWorkingMoment: getLastWorkingMomentBeforeDate(start, personalLeaves),
           };
         }
 
@@ -432,7 +1098,7 @@
         return friday;
       }
 
-      function computeWorkRemainingUntil(stopAt, now = new Date()) {
+      function computeWorkRemainingUntil(stopAt, now, personalLeaves) {
         if (!stopAt || now >= stopAt) {
           return 0;
         }
@@ -442,7 +1108,7 @@
         const lastDay = startOfDay(stopAt);
 
         for (let d = new Date(today); d <= lastDay; d.setDate(d.getDate() + 1)) {
-          if (!isBusinessDay(d)) {
+          if (!isBusinessDay(d, personalLeaves)) {
             continue;
           }
 
@@ -461,66 +1127,312 @@
         return total;
       }
 
+      function renderPeriodList() {
+        const periods = state.draftSettings.vacationPeriods;
+
+        if (!periods.length) {
+          elements.periodList.innerHTML =
+            '<div class="empty-state">Aucune periode configuree pour le moment.</div>';
+          return;
+        }
+
+        elements.periodList.innerHTML = periods
+          .map((period, index) => {
+            const start = parseKey(period.start);
+            const end = parseKey(period.end);
+            const totalDays =
+              Math.round((startOfDay(end) - startOfDay(start)) / FULL_WORKDAY_MS) + 1;
+
+            return `
+              <div class="period-list-item">
+                <div class="period-meta">
+                  <div class="period-title">${formatShortFrenchDate(start)} - ${formatShortFrenchDate(end)}</div>
+                  <div class="period-subtitle">${totalDays} ${totalDays > 1 ? "jours" : "jour"} calendaires</div>
+                </div>
+                <button class="button-secondary" type="button" data-remove-period="${index}">Supprimer</button>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      function renderPhotoList() {
+        const photos = state.draftSettings.photos;
+
+        if (!photos.length) {
+          elements.photoList.innerHTML =
+            '<div class="empty-state">Aucune photo configuree pour le moment.</div>';
+          return;
+        }
+
+        elements.photoList.innerHTML = photos
+          .map(
+            (photo, index) => `
+              <div class="photo-item">
+                <img class="photo-preview" src="${photo.src}" alt="${photo.alt}" />
+                <div class="period-meta">
+                  <div class="period-title">${photo.alt}</div>
+                  <div class="period-subtitle">${photo.src}</div>
+                </div>
+                <button class="button-secondary" type="button" data-remove-photo="${index}">Supprimer</button>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      function updateSabbaticalFieldState() {
+        const enabled = elements.hasSabbaticalInput.checked;
+        elements.sabbaticalDateField.classList.toggle("hidden", !enabled);
+      }
+
+      function openSettingsModal() {
+        state.draftSettings = normalizeSettings(state.settings);
+        elements.hasSabbaticalInput.checked = state.draftSettings.hasSabbatical;
+        elements.sabbaticalDateInput.value = state.draftSettings.sabbaticalDate;
+        updateSabbaticalFieldState();
+        renderPeriodList();
+        renderPhotoList();
+        elements.vacationRangeInput.value = "";
+        state.vacationPicker.clear();
+        elements.photoUrlInput.value = "";
+        elements.photoAltInput.value = "";
+        elements.settingsModal.classList.remove("hidden");
+        elements.settingsModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeSettingsModal() {
+        elements.settingsModal.classList.add("hidden");
+        elements.settingsModal.setAttribute("aria-hidden", "true");
+      }
+
+      function addDraftVacationPeriod() {
+        const selectedDates = state.vacationPicker.selectedDates;
+
+        if (selectedDates.length !== 2) {
+          return;
+        }
+
+        const [firstDate, secondDate] = selectedDates;
+        const start = firstDate <= secondDate ? firstDate : secondDate;
+        const end = firstDate <= secondDate ? secondDate : firstDate;
+
+        state.draftSettings.vacationPeriods = normalizePeriods([
+          ...state.draftSettings.vacationPeriods,
+          {
+            start: formatYYYYMMDD(start),
+            end: formatYYYYMMDD(end),
+          },
+        ]);
+
+        renderPeriodList();
+        state.vacationPicker.clear();
+        elements.vacationRangeInput.value = "";
+      }
+
+      function saveDraftSettings() {
+        state.draftSettings.hasSabbatical = elements.hasSabbaticalInput.checked;
+        state.draftSettings.sabbaticalDate =
+          elements.sabbaticalDateInput.value || DEFAULT_SETTINGS.sabbaticalDate;
+        saveSettings(state.draftSettings);
+        renderSlides();
+        closeSettingsModal();
+        tick();
+      }
+
+      function resetDraftSettings() {
+        state.draftSettings = normalizeSettings(DEFAULT_SETTINGS);
+        elements.hasSabbaticalInput.checked = state.draftSettings.hasSabbatical;
+        elements.sabbaticalDateInput.value = state.draftSettings.sabbaticalDate;
+        updateSabbaticalFieldState();
+        renderPeriodList();
+        renderPhotoList();
+        state.vacationPicker.clear();
+        elements.vacationRangeInput.value = "";
+        elements.photoUrlInput.value = "";
+        elements.photoAltInput.value = "";
+      }
+
+      function addDraftPhoto() {
+        const src = elements.photoUrlInput.value.trim();
+        const alt = elements.photoAltInput.value.trim() || "Photo de fond";
+
+        if (!src) {
+          return;
+        }
+
+        state.draftSettings.photos = [
+          ...state.draftSettings.photos,
+          { src, alt },
+        ];
+        renderPhotoList();
+        elements.photoUrlInput.value = "";
+        elements.photoAltInput.value = "";
+      }
+
       function tick() {
         const now = new Date();
-
-        const sabbaticalDiff = Math.max(0, TARGET - now);
-        document.getElementById("timer").innerHTML =
-          formatMainCountdown(sabbaticalDiff);
-
-        const worktimeToSabbatical = computeWorkRemainingUntil(TARGET, now);
-        document.getElementById("worktimeToSabbatical").textContent =
-          formatDuration(worktimeToSabbatical);
+        const derived = createDerivedData(state.settings);
+        const nextVacation = getNextVacationInfo(
+          now,
+          derived.vacationBlocks,
+          derived.personalLeaves
+        );
 
         const fridayEnd = getThisWeekFridayEnd(now);
         let weekendWorkRemaining = 0;
 
         if (fridayEnd && now < fridayEnd && !isWeekend(now)) {
-          weekendWorkRemaining = computeWorkRemainingUntil(fridayEnd, now);
+          weekendWorkRemaining = computeWorkRemainingUntil(
+            fridayEnd,
+            now,
+            derived.personalLeaves
+          );
         }
 
-        document.getElementById("weekendWorkCountdown").textContent =
-          formatDuration(weekendWorkRemaining);
+        elements.weekendWorkCountdown.textContent = formatDuration(
+          weekendWorkRemaining
+        );
 
-        const nextVacation = getNextVacationInfo(now);
-        const vacationLine = document.getElementById("vacationLine");
+        if (state.settings.hasSabbatical && derived.target) {
+          const sabbaticalDiff = Math.max(0, derived.target - now);
+          const worktimeToSabbatical = computeWorkRemainingUntil(
+            derived.target,
+            now,
+            derived.personalLeaves
+          );
+
+          elements.mainTitle.textContent = "Annee sabbatique dans...";
+          elements.timer.innerHTML = formatMainCountdown(sabbaticalDiff);
+          elements.worktimeToSabbatical.textContent = formatDuration(
+            worktimeToSabbatical
+          );
+          elements.workToSabbaticalLine.classList.remove("hidden");
+          elements.vacationLine.classList.remove("is-featured");
+        } else {
+          elements.mainTitle.textContent = nextVacation
+            ? "Prochaines vacances dans..."
+            : "Aucune prochaine periode";
+          elements.timer.innerHTML = nextVacation
+            ? formatMainCountdown(
+                Math.max(0, startOfDay(nextVacation.start) - now)
+              )
+            : formatMainCountdown(0);
+          elements.workToSabbaticalLine.classList.add("hidden");
+          elements.vacationLine.classList.add("is-featured");
+        }
 
         if (nextVacation) {
           const remaining = computeWorkRemainingUntil(
             nextVacation.lastWorkingMoment,
-            now
+            now,
+            derived.personalLeaves
           );
 
-          document.getElementById(
-            "vacationLabel"
-          ).textContent = `Temps avant ${nextVacation.days} ${
+          elements.vacationLabel.textContent = `Temps avant ${nextVacation.days} ${
             nextVacation.days > 1 ? "jours" : "jour"
           } de vacances :`;
-
-          document.getElementById("vacationCountdown").textContent =
-            formatDuration(remaining);
-
-          vacationLine.classList.remove("hidden");
+          elements.vacationCountdown.textContent = formatDuration(remaining);
+          elements.vacationLine.classList.remove("hidden");
         } else {
-          vacationLine.classList.add("hidden");
+          elements.vacationLine.classList.add("hidden");
         }
       }
 
-      tick();
-      setInterval(tick, 1000);
-
-      const slides = document.querySelectorAll(".slide");
-      let currentSlide = 0;
-
-      function showSlide() {
-        slides.forEach((slide, i) => {
-          slide.style.opacity = i === currentSlide ? "1" : "0";
+      function initSettingsEvents() {
+        elements.openSettings.addEventListener("click", openSettingsModal);
+        elements.closeSettings.addEventListener("click", closeSettingsModal);
+        elements.settingsModal.addEventListener("click", (event) => {
+          if (event.target === elements.settingsModal) {
+            closeSettingsModal();
+          }
         });
-        currentSlide = (currentSlide + 1) % slides.length;
+        elements.hasSabbaticalInput.addEventListener(
+          "change",
+          updateSabbaticalFieldState
+        );
+        elements.addVacationPeriod.addEventListener("click", addDraftVacationPeriod);
+        elements.saveSettings.addEventListener("click", saveDraftSettings);
+        elements.resetDefaults.addEventListener("click", resetDraftSettings);
+        elements.addPhoto.addEventListener("click", addDraftPhoto);
+        elements.periodList.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-remove-period]");
+          if (!button) {
+            return;
+          }
+
+          const index = Number(button.getAttribute("data-remove-period"));
+          state.draftSettings.vacationPeriods.splice(index, 1);
+          renderPeriodList();
+        });
+        elements.photoList.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-remove-photo]");
+          if (!button) {
+            return;
+          }
+
+          const index = Number(button.getAttribute("data-remove-photo"));
+          state.draftSettings.photos.splice(index, 1);
+          renderPhotoList();
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && !elements.settingsModal.classList.contains("hidden")) {
+            closeSettingsModal();
+          }
+        });
       }
 
-      showSlide();
-      setInterval(showSlide, 5000);
+      function initVacationPicker() {
+        state.vacationPicker = flatpickr(elements.vacationRangeInput, {
+          mode: "range",
+          dateFormat: "Y-m-d",
+          locale: flatpickr.l10ns.fr,
+          disable: [
+            (date) => isHoliday(date),
+          ],
+        });
+      }
+
+      function renderSlides() {
+        const photos = state.settings.photos;
+        elements.slideshowContainer.innerHTML = photos
+          .map(
+            (photo) =>
+              `<img class="slide" src="${photo.src}" alt="${photo.alt}" />`
+          )
+          .join("");
+        state.slideshowIndex = 0;
+        startSlideshow();
+      }
+
+      function startSlideshow() {
+        const slides = document.querySelectorAll(".slide");
+
+        if (state.slideshowTimer) {
+          clearInterval(state.slideshowTimer);
+          state.slideshowTimer = null;
+        }
+
+        if (!slides.length) {
+          return;
+        }
+
+        function showSlide() {
+          slides.forEach((slide, index) => {
+            slide.classList.toggle("is-visible", index === state.slideshowIndex);
+          });
+          state.slideshowIndex = (state.slideshowIndex + 1) % slides.length;
+        }
+
+        showSlide();
+        state.slideshowTimer = setInterval(showSlide, 5000);
+      }
+
+      initVacationPicker();
+      initSettingsEvents();
+      renderSlides();
+      tick();
+      setInterval(tick, 1000);
     </script>
   </body>
 </html>
