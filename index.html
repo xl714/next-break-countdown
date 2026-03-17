@@ -273,6 +273,41 @@
         gap: 18px;
       }
 
+      .settings-tabs {
+        display: inline-flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        padding: 6px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .settings-tab {
+        padding: 10px 16px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--text-soft);
+        cursor: pointer;
+        font-weight: 600;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .settings-tab.is-active {
+        background: rgba(255, 215, 0, 0.16);
+        border-color: rgba(255, 215, 0, 0.3);
+        color: var(--text-main);
+      }
+
+      .settings-panel {
+        display: grid;
+        gap: 18px;
+      }
+
       .setting-card {
         padding: 20px;
         border-radius: 20px;
@@ -480,6 +515,7 @@
         .photo-row,
         .action-row,
         .period-list-item,
+        .settings-tabs,
         .setting-header,
         .modal-header {
           flex-direction: column;
@@ -559,82 +595,119 @@
           </button>
         </div>
 
+        <div class="settings-tabs" role="tablist" aria-label="Sections des reglages">
+          <button
+            id="datesTabButton"
+            class="settings-tab is-active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="datesSettingsPanel"
+          >
+            Dates
+          </button>
+          <button
+            id="imagesTabButton"
+            class="settings-tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="imagesSettingsPanel"
+          >
+            Images
+          </button>
+        </div>
+
         <div class="settings-grid">
-          <section class="setting-card">
-            <div class="setting-header">
-              <div>
-                <h3>Annee sabbatique</h3>
-                <p>
-                  Active ou non une date cible. Si elle est desactivee, la page
-                  met en avant les prochaines vacances.
-                </p>
+          <div
+            id="datesSettingsPanel"
+            class="settings-panel"
+            role="tabpanel"
+            aria-labelledby="datesTabButton"
+          >
+            <section class="setting-card">
+              <div class="setting-header">
+                <div>
+                  <h3>Annee sabbatique</h3>
+                  <p>
+                    Active ou non une date cible. Si elle est desactivee, la page
+                    met en avant les prochaines vacances.
+                  </p>
+                </div>
+                <label class="toggle">
+                  <input id="hasSabbaticalInput" type="checkbox" />
+                  <span>Activer</span>
+                </label>
               </div>
-              <label class="toggle">
-                <input id="hasSabbaticalInput" type="checkbox" />
-                <span>Activer</span>
-              </label>
-            </div>
 
-            <div id="sabbaticalDateField" class="field">
-              <label for="sabbaticalDateInput">Date de debut</label>
-              <input id="sabbaticalDateInput" type="date" />
-            </div>
-          </section>
-
-          <section class="setting-card">
-            <div class="setting-header">
-              <div>
-                <h3>Periodes de vacances</h3>
-                <p>
-                  Ajoute des periodes de conges avec le calendrier. Elles sont
-                  ensuite prises en compte dans les compteurs.
-                </p>
+              <div id="sabbaticalDateField" class="field">
+                <label for="sabbaticalDateInput">Date de debut</label>
+                <input id="sabbaticalDateInput" type="date" />
               </div>
-            </div>
+            </section>
 
-            <div class="range-row">
-              <input
-                id="vacationRangeInput"
-                type="text"
-                placeholder="Selectionner une periode"
-              />
-              <button id="addVacationPeriod" class="button-primary" type="button">
-                Ajouter
-              </button>
-            </div>
-
-            <div id="periodList" class="period-list"></div>
-          </section>
-
-          <section class="setting-card">
-            <div class="setting-header">
-              <div>
-                <h3>Photos du fond</h3>
-                <p>
-                  Ajoute des URLs ou des chemins d'images du projet pour le
-                  slideshow d'arriere-plan.
-                </p>
+            <section class="setting-card">
+              <div class="setting-header">
+                <div>
+                  <h3>Periodes de vacances</h3>
+                  <p>
+                    Ajoute des periodes de conges avec le calendrier. Elles sont
+                    ensuite prises en compte dans les compteurs.
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <div class="photo-row">
-              <input
-                id="photoUrlInput"
-                type="text"
-                placeholder="URL ou chemin de l'image"
-              />
-              <input
-                id="photoAltInput"
-                type="text"
-                placeholder="Description optionnelle"
-              />
-              <button id="addPhoto" class="button-primary" type="button">
-                Ajouter
-              </button>
-            </div>
+              <div class="range-row">
+                <input
+                  id="vacationRangeInput"
+                  type="text"
+                  placeholder="Selectionner une periode"
+                />
+                <button id="addVacationPeriod" class="button-primary" type="button">
+                  Ajouter
+                </button>
+              </div>
 
-            <div id="photoList" class="photo-list"></div>
-          </section>
+              <div id="periodList" class="period-list"></div>
+            </section>
+          </div>
+
+          <div
+            id="imagesSettingsPanel"
+            class="settings-panel hidden"
+            role="tabpanel"
+            aria-labelledby="imagesTabButton"
+          >
+            <section class="setting-card">
+              <div class="setting-header">
+                <div>
+                  <h3>Photos du fond</h3>
+                  <p>
+                    Ajoute des URLs ou des chemins d'images du projet pour le
+                    slideshow d'arriere-plan.
+                  </p>
+                </div>
+              </div>
+
+              <div class="photo-row">
+                <input
+                  id="photoUrlInput"
+                  type="text"
+                  placeholder="URL ou chemin de l'image"
+                />
+                <input
+                  id="photoAltInput"
+                  type="text"
+                  placeholder="Description optionnelle"
+                />
+                <button id="addPhoto" class="button-primary" type="button">
+                  Ajouter
+                </button>
+              </div>
+
+              <div id="photoList" class="photo-list"></div>
+            </section>
+          </div>
         </div>
 
         <div class="action-row">
@@ -697,6 +770,10 @@
         settingsModal: document.getElementById("settingsModal"),
         openSettings: document.getElementById("openSettings"),
         closeSettings: document.getElementById("closeSettings"),
+        datesTabButton: document.getElementById("datesTabButton"),
+        imagesTabButton: document.getElementById("imagesTabButton"),
+        datesSettingsPanel: document.getElementById("datesSettingsPanel"),
+        imagesSettingsPanel: document.getElementById("imagesSettingsPanel"),
         hasSabbaticalInput: document.getElementById("hasSabbaticalInput"),
         sabbaticalDateField: document.getElementById("sabbaticalDateField"),
         sabbaticalDateInput: document.getElementById("sabbaticalDateInput"),
@@ -718,6 +795,7 @@
         slideshowIndex: 0,
         slideshowTimer: null,
         holidayCache: new Map(),
+        activeSettingsTab: "dates",
       };
 
       function parseKey(key) {
@@ -1186,11 +1264,24 @@
         elements.sabbaticalDateField.classList.toggle("hidden", !enabled);
       }
 
+      function setActiveSettingsTab(tabName) {
+        const showDates = tabName === "dates";
+        state.activeSettingsTab = showDates ? "dates" : "images";
+
+        elements.datesTabButton.classList.toggle("is-active", showDates);
+        elements.imagesTabButton.classList.toggle("is-active", !showDates);
+        elements.datesTabButton.setAttribute("aria-selected", String(showDates));
+        elements.imagesTabButton.setAttribute("aria-selected", String(!showDates));
+        elements.datesSettingsPanel.classList.toggle("hidden", !showDates);
+        elements.imagesSettingsPanel.classList.toggle("hidden", showDates);
+      }
+
       function openSettingsModal() {
         state.draftSettings = normalizeSettings(state.settings);
         elements.hasSabbaticalInput.checked = state.draftSettings.hasSabbatical;
         elements.sabbaticalDateInput.value = state.draftSettings.sabbaticalDate;
         updateSabbaticalFieldState();
+        setActiveSettingsTab("dates");
         renderPeriodList();
         renderPhotoList();
         elements.vacationRangeInput.value = "";
@@ -1245,6 +1336,7 @@
         elements.hasSabbaticalInput.checked = state.draftSettings.hasSabbatical;
         elements.sabbaticalDateInput.value = state.draftSettings.sabbaticalDate;
         updateSabbaticalFieldState();
+        setActiveSettingsTab("dates");
         renderPeriodList();
         renderPhotoList();
         state.vacationPicker.clear();
@@ -1311,11 +1403,11 @@
           elements.vacationLine.classList.remove("is-featured");
         } else {
           elements.mainTitle.textContent = nextVacation
-            ? "Prochaines vacances dans..."
+            ? "Depart en conge dans..."
             : "Aucune prochaine periode";
           elements.timer.innerHTML = nextVacation
             ? formatMainCountdown(
-                Math.max(0, startOfDay(nextVacation.start) - now)
+                Math.max(0, nextVacation.lastWorkingMoment - now)
               )
             : formatMainCountdown(0);
           elements.workToSabbaticalLine.classList.add("hidden");
@@ -1342,6 +1434,12 @@
       function initSettingsEvents() {
         elements.openSettings.addEventListener("click", openSettingsModal);
         elements.closeSettings.addEventListener("click", closeSettingsModal);
+        elements.datesTabButton.addEventListener("click", () =>
+          setActiveSettingsTab("dates")
+        );
+        elements.imagesTabButton.addEventListener("click", () =>
+          setActiveSettingsTab("images")
+        );
         elements.settingsModal.addEventListener("click", (event) => {
           if (event.target === elements.settingsModal) {
             closeSettingsModal();
