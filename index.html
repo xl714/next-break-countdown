@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Année sabbatique – compte à rebours</title>
+    <title data-i18n="pageTitle">Sabbatical – countdown</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -85,6 +85,56 @@
         top: 20px;
         right: 20px;
         z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .language-switcher {
+        display: inline-flex;
+        gap: 4px;
+        padding: 6px;
+        border-radius: 999px;
+        background: rgba(10, 14, 25, 0.52);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        backdrop-filter: blur(12px);
+      }
+
+      .lang-flag {
+        width: 34px;
+        height: 24px;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        background: transparent;
+        cursor: pointer;
+        overflow: hidden;
+        opacity: 0.55;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          opacity 0.2s ease,
+          border-color 0.2s ease,
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .lang-flag svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .lang-flag:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .lang-flag.is-active {
+        opacity: 1;
+        border-color: rgba(255, 215, 0, 0.5);
+        box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
       }
 
       .settings-button,
@@ -614,30 +664,31 @@
     <div id="slideshowContainer" class="slideshow-container"></div>
 
     <div class="toolbar">
-      <button id="openSettings" class="settings-button" type="button">
+      <div id="languageSwitcher" class="language-switcher" role="group" data-i18n-aria-label="languageSwitcherAria"></div>
+      <button id="openSettings" class="settings-button" type="button" data-i18n="settingsButton">
         Settings
       </button>
     </div>
 
     <div class="wrap">
       <div class="content">
-        <div class="eyebrow">Compte a rebours personnalise</div>
-        <div id="mainTitle" class="title">Annee sabbatique dans...</div>
-        <div id="timer" class="timer">--j --h --m --s</div>
+        <div class="eyebrow" data-i18n="eyebrow">Personalized countdown</div>
+        <div id="mainTitle" class="title">Sabbatical starts in...</div>
+        <div id="timer" class="timer">--d --h --m --s</div>
 
         <div class="stats">
           <div id="workToSabbaticalLine" class="stat-line">
-            Temps de travail restant avant l'annee sabbatique :
+            <span data-i18n="workToSabbaticalLine">Work time remaining before the sabbatical:</span>
             <strong id="worktimeToSabbatical">--</strong>
           </div>
 
           <div class="stat-line">
-            Reste a travailler avant le week-end :
+            <span data-i18n="weekendWorkLine">Time left to work before the weekend:</span>
             <strong id="weekendWorkCountdown">--</strong>
           </div>
 
           <div id="vacationLine" class="stat-line hidden">
-            <span id="vacationLabel">Reste a travailler avant 0 jour de vacances :</span>
+            <span id="vacationLabel">Time left to work before vacation:</span>
             <strong id="vacationCountdown">--</strong>
           </div>
         </div>
@@ -653,23 +704,23 @@
       >
         <div class="modal-header">
           <div>
-            <h2 id="settingsTitle" class="modal-title">Settings</h2>
-            <p class="modal-copy">
-              Personnalise la date sabbatique et tes periodes de vacances. Les
-              changements sont sauvegardes dans le navigateur.
+            <h2 id="settingsTitle" class="modal-title" data-i18n="settingsTitle">Settings</h2>
+            <p class="modal-copy" data-i18n="settingsCopy">
+              Customize the sabbatical date and your vacation periods. Changes
+              are saved in your browser.
             </p>
           </div>
           <button
             id="closeSettings"
             class="icon-button"
             type="button"
-            aria-label="Fermer les reglages"
+            data-i18n-aria-label="closeSettingsAria"
           >
             ×
           </button>
         </div>
 
-        <div class="settings-tabs" role="tablist" aria-label="Sections des reglages">
+        <div class="settings-tabs" role="tablist" data-i18n-aria-label="settingsTabsAria">
           <button
             id="datesTabButton"
             class="settings-tab is-active"
@@ -677,6 +728,7 @@
             role="tab"
             aria-selected="true"
             aria-controls="datesSettingsPanel"
+            data-i18n="datesTab"
           >
             Dates
           </button>
@@ -687,6 +739,7 @@
             role="tab"
             aria-selected="false"
             aria-controls="imagesSettingsPanel"
+            data-i18n="imagesTab"
           >
             Images
           </button>
@@ -702,25 +755,25 @@
             <section class="setting-card">
               <div class="setting-header">
                 <div>
-                  <h3>Evenement principal</h3>
-                  <p>
-                    Active ou non une date cible. Si elle est desactivee, la page
-                    met en avant les prochaines vacances.
+                  <h3 data-i18n="mainEventHeading">Main event</h3>
+                  <p data-i18n="mainEventDescription">
+                    Toggle a target date. If disabled, the page highlights the
+                    next vacation.
                   </p>
                 </div>
                 <label class="toggle">
                   <input id="hasSabbaticalInput" type="checkbox" />
-                  <span>Activer</span>
+                  <span data-i18n="enableToggle">Enable</span>
                 </label>
               </div>
 
               <div id="mainEventTitleField" class="field">
-                <label for="mainEventTitleInput">Titre affiche</label>
+                <label for="mainEventTitleInput" data-i18n="displayedTitleLabel">Displayed title</label>
                 <input id="mainEventTitleInput" type="text" />
               </div>
 
               <div id="sabbaticalDateField" class="field">
-                <label for="sabbaticalDateInput">Date de debut</label>
+                <label for="sabbaticalDateInput" data-i18n="startDateLabel">Start date</label>
                 <input id="sabbaticalDateInput" type="date" />
               </div>
             </section>
@@ -728,10 +781,10 @@
             <section class="setting-card">
               <div class="setting-header">
                 <div>
-                  <h3>Periodes de vacances</h3>
-                  <p>
-                    Ajoute des periodes de conges avec le calendrier. Elles sont
-                    ensuite prises en compte dans les compteurs.
+                  <h3 data-i18n="vacationPeriodsHeading">Vacation periods</h3>
+                  <p data-i18n="vacationPeriodsDescription">
+                    Add leave periods using the calendar. They are then included
+                    in the counters.
                   </p>
                 </div>
               </div>
@@ -740,10 +793,11 @@
                 <input
                   id="vacationRangeInput"
                   type="text"
-                  placeholder="Selectionner une periode"
+                  data-i18n-placeholder="selectPeriodPlaceholder"
+                  placeholder="Select a period"
                 />
-                <button id="addVacationPeriod" class="button-primary" type="button">
-                  Ajouter
+                <button id="addVacationPeriod" class="button-primary" type="button" data-i18n="addButton">
+                  Add
                 </button>
               </div>
 
@@ -760,10 +814,10 @@
             <section class="setting-card">
               <div class="setting-header">
                 <div>
-                  <h3>Photos du fond</h3>
-                  <p>
-                    Ajoute des URLs ou des chemins d'images du projet pour le
-                    slideshow d'arriere-plan.
+                  <h3 data-i18n="backgroundPhotosHeading">Background photos</h3>
+                  <p data-i18n="backgroundPhotosDescription">
+                    Add image URLs or project paths for the background
+                    slideshow.
                   </p>
                 </div>
               </div>
@@ -772,15 +826,17 @@
                 <input
                   id="photoUrlInput"
                   type="text"
-                  placeholder="URL ou chemin de l'image"
+                  data-i18n-placeholder="photoUrlPlaceholder"
+                  placeholder="Image URL or path"
                 />
                 <input
                   id="photoAltInput"
                   type="text"
-                  placeholder="Description optionnelle"
+                  data-i18n-placeholder="photoAltPlaceholder"
+                  placeholder="Optional description"
                 />
-                <button id="addPhoto" class="button-primary" type="button">
-                  Ajouter
+                <button id="addPhoto" class="button-primary" type="button" data-i18n="addButton">
+                  Add
                 </button>
               </div>
 
@@ -790,11 +846,11 @@
         </div>
 
         <div class="action-row">
-          <button id="resetDefaults" class="button-secondary" type="button">
-            Reinitialiser
+          <button id="resetDefaults" class="button-secondary" type="button" data-i18n="resetButton">
+            Reset
           </button>
-          <button id="saveSettings" class="button-primary" type="button">
-            Enregistrer
+          <button id="saveSettings" class="button-primary" type="button" data-i18n="saveButton">
+            Save
           </button>
         </div>
       </div>
@@ -806,10 +862,111 @@
       const STORAGE_KEY = "countdown-settings-v1";
       const WORK_END_HOUR = 18;
       const FULL_WORKDAY_MS = 24 * 60 * 60 * 1000;
+      const DEFAULT_LANGUAGE = "en";
+
+      const TRANSLATIONS = {
+        en: {
+          name: "English",
+          locale: "en-US",
+          flatpickrLocale: "default",
+          flagSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice"><clipPath id="uk-clip-en"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><path fill="#012169" d="M0,0 v30 h60 v-30 z"/><path stroke="#fff" stroke-width="6" d="M0,0 L60,30 M60,0 L0,30"/><path stroke="#C8102E" stroke-width="4" clip-path="url(#uk-clip-en)" d="M0,0 L60,30 M60,0 L0,30"/><path stroke="#fff" stroke-width="10" d="M30,0 v30 M0,15 h60"/><path stroke="#C8102E" stroke-width="6" d="M30,0 v30 M0,15 h60"/></svg>`,
+          pageTitle: "Sabbatical – countdown",
+          eyebrow: "Personalized countdown",
+          settingsButton: "Settings",
+          settingsTitle: "Settings",
+          settingsCopy: "Customize the sabbatical date and your vacation periods. Changes are saved in your browser.",
+          closeSettingsAria: "Close settings",
+          settingsTabsAria: "Settings sections",
+          languageSwitcherAria: "Language",
+          languageFlagAria: ({ name }) => `Switch to ${name}`,
+          datesTab: "Dates",
+          imagesTab: "Images",
+          mainEventHeading: "Main event",
+          mainEventDescription: "Toggle a target date. If disabled, the page highlights the next vacation.",
+          enableToggle: "Enable",
+          displayedTitleLabel: "Displayed title",
+          startDateLabel: "Start date",
+          vacationPeriodsHeading: "Vacation periods",
+          vacationPeriodsDescription: "Add leave periods using the calendar. They are then included in the counters.",
+          selectPeriodPlaceholder: "Select a period",
+          addButton: "Add",
+          backgroundPhotosHeading: "Background photos",
+          backgroundPhotosDescription: "Add image URLs or project paths for the background slideshow.",
+          photoUrlPlaceholder: "Image URL or path",
+          photoAltPlaceholder: "Optional description",
+          resetButton: "Reset",
+          saveButton: "Save",
+          removeButton: "Remove",
+          noPeriodsEmpty: "No period configured yet.",
+          noPhotosEmpty: "No photo configured yet.",
+          calendarDays: ({ days }) => `${days} calendar ${days > 1 ? "days" : "day"}`,
+          backgroundPhotoAltDefault: "Background photo",
+          workToSabbaticalLine: "Work time remaining before the sabbatical:",
+          weekendWorkLine: "Time left to work before the weekend:",
+          vacationLabel: ({ days }) => `Time left to work before ${days} ${days > 1 ? "days" : "day"} of vacation:`,
+          nextVacationTitle: "Vacation starts in...",
+          noUpcomingPeriod: "No upcoming period",
+          initialTimer: "--d --h --m --s",
+          duration: ({ days, hours, minutes, seconds }) =>
+            `${days} ${days > 1 ? "days" : "day"} ${hours}h ${minutes}m ${seconds}s`,
+          mainCountdown: ({ days, hours, minutes, seconds }) =>
+            `${days} <span class="t-unit">${days > 1 ? "days" : "day"}</span> ${hours} <span class="t-unit">hours</span> ${minutes} <span class="t-unit">minutes</span> ${seconds} <span class="t-unit">seconds</span>`,
+        },
+        fr: {
+          name: "Francais",
+          locale: "fr-FR",
+          flatpickrLocale: "fr",
+          flagSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice"><rect width="20" height="30" fill="#0055A4"/><rect x="20" width="20" height="30" fill="#FFFFFF"/><rect x="40" width="20" height="30" fill="#EF4135"/></svg>`,
+          pageTitle: "Annee sabbatique – compte a rebours",
+          eyebrow: "Compte a rebours personnalise",
+          settingsButton: "Reglages",
+          settingsTitle: "Reglages",
+          settingsCopy: "Personnalise la date sabbatique et tes periodes de vacances. Les changements sont sauvegardes dans le navigateur.",
+          closeSettingsAria: "Fermer les reglages",
+          settingsTabsAria: "Sections des reglages",
+          languageSwitcherAria: "Langue",
+          languageFlagAria: ({ name }) => `Passer en ${name}`,
+          datesTab: "Dates",
+          imagesTab: "Images",
+          mainEventHeading: "Evenement principal",
+          mainEventDescription: "Active ou non une date cible. Si elle est desactivee, la page met en avant les prochaines vacances.",
+          enableToggle: "Activer",
+          displayedTitleLabel: "Titre affiche",
+          startDateLabel: "Date de debut",
+          vacationPeriodsHeading: "Periodes de vacances",
+          vacationPeriodsDescription: "Ajoute des periodes de conges avec le calendrier. Elles sont ensuite prises en compte dans les compteurs.",
+          selectPeriodPlaceholder: "Selectionner une periode",
+          addButton: "Ajouter",
+          backgroundPhotosHeading: "Photos du fond",
+          backgroundPhotosDescription: "Ajoute des URLs ou des chemins d'images du projet pour le slideshow d'arriere-plan.",
+          photoUrlPlaceholder: "URL ou chemin de l'image",
+          photoAltPlaceholder: "Description optionnelle",
+          resetButton: "Reinitialiser",
+          saveButton: "Enregistrer",
+          removeButton: "Supprimer",
+          noPeriodsEmpty: "Aucune periode configuree pour le moment.",
+          noPhotosEmpty: "Aucune photo configuree pour le moment.",
+          calendarDays: ({ days }) => `${days} ${days > 1 ? "jours" : "jour"} calendaires`,
+          backgroundPhotoAltDefault: "Photo de fond",
+          workToSabbaticalLine: "Temps de travail restant avant l'annee sabbatique :",
+          weekendWorkLine: "Reste a travailler avant le week-end :",
+          vacationLabel: ({ days }) => `Reste a travailler avant ${days} ${days > 1 ? "jours" : "jour"} de vacances :`,
+          nextVacationTitle: "Depart en conge dans...",
+          noUpcomingPeriod: "Aucune prochaine periode",
+          initialTimer: "--j --h --m --s",
+          duration: ({ days, hours, minutes, seconds }) =>
+            `${days} ${days > 1 ? "jours" : "jour"} ${hours}h ${minutes}m ${seconds}s`,
+          mainCountdown: ({ days, hours, minutes, seconds }) =>
+            `${days} <span class="t-unit">${days > 1 ? "jours" : "jour"}</span> ${hours} <span class="t-unit">heures</span> ${minutes} <span class="t-unit">minutes</span> ${seconds} <span class="t-unit">secondes</span>`,
+        },
+      };
+
+      const SUPPORTED_LANGUAGES = Object.keys(TRANSLATIONS);
 
       const DEFAULT_SETTINGS = {
+        language: DEFAULT_LANGUAGE,
         hasSabbatical: true,
-        mainEventTitle: "Année sabbatique dans...",
+        mainEventTitle: "Sabbatical starts in...",
         sabbaticalDate: "2026-05-31",
         vacationPeriods: [
           { start: "20260323", end: "20260327" },
@@ -819,25 +976,26 @@
         photos: [
           {
             src: "florian-wehde-lY87gHWdGNo-unsplash.jpg",
-            alt: "Rue animee en Asie du Sud-Est",
+            alt: "Busy street in South-East Asia",
           },
           {
             src: "giuliano-gabella-S2aZq6yG-b4-unsplash.jpg",
-            alt: "Lagune turquoise en Asie du Sud-Est",
+            alt: "Turquoise lagoon in South-East Asia",
           },
           {
             src: "guille-alvarez-P11Z-nILhCs-unsplash.jpg",
-            alt: "Pecheur avec filet en Asie du Sud-Est",
+            alt: "Fisherman with net in South-East Asia",
           },
-          { src: "guilin.webp", alt: "Paysage de Guilin" },
+          { src: "guilin.webp", alt: "Guilin landscape" },
           {
             src: "china-sunset-on-rice-fields.png",
-            alt: "Coucher de soleil sur les rizieres en Chine",
+            alt: "Sunset over rice fields in China",
           },
         ],
       };
 
       const elements = {
+        htmlRoot: document.documentElement,
         mainTitle: document.getElementById("mainTitle"),
         timer: document.getElementById("timer"),
         workToSabbaticalLine: document.getElementById("workToSabbaticalLine"),
@@ -847,6 +1005,7 @@
         vacationLabel: document.getElementById("vacationLabel"),
         vacationCountdown: document.getElementById("vacationCountdown"),
         slideshowContainer: document.getElementById("slideshowContainer"),
+        languageSwitcher: document.getElementById("languageSwitcher"),
         settingsModal: document.getElementById("settingsModal"),
         openSettings: document.getElementById("openSettings"),
         closeSettings: document.getElementById("closeSettings"),
@@ -880,6 +1039,24 @@
         activeSettingsTab: "dates",
       };
 
+      function t(key, params) {
+        const lang = state.settings && state.settings.language
+          ? state.settings.language
+          : DEFAULT_LANGUAGE;
+        const dict = TRANSLATIONS[lang] || TRANSLATIONS[DEFAULT_LANGUAGE];
+        const value = dict[key];
+
+        if (typeof value === "function") {
+          return value(params || {});
+        }
+
+        return value != null ? value : key;
+      }
+
+      function getCurrentLocale() {
+        return t("locale");
+      }
+
       function parseKey(key) {
         const y = Number(key.slice(0, 4));
         const m = Number(key.slice(4, 6)) - 1;
@@ -903,8 +1080,8 @@
         return `${y}${m}${d}`;
       }
 
-      function formatShortFrenchDate(date) {
-        return new Intl.DateTimeFormat("fr-FR", {
+      function formatLongDate(date) {
+        return new Intl.DateTimeFormat(getCurrentLocale(), {
           day: "2-digit",
           month: "long",
           year: "numeric",
@@ -1027,6 +1204,9 @@
 
       function normalizeSettings(raw) {
         const safe = raw && typeof raw === "object" ? raw : {};
+        const language = SUPPORTED_LANGUAGES.includes(safe.language)
+          ? safe.language
+          : DEFAULT_SETTINGS.language;
         const hasSabbatical =
           typeof safe.hasSabbatical === "boolean"
             ? safe.hasSabbatical
@@ -1055,11 +1235,12 @@
                 alt:
                   typeof photo.alt === "string" && photo.alt.trim()
                     ? photo.alt.trim()
-                    : "Photo de fond",
+                    : "",
               }))
           : DEFAULT_SETTINGS.photos;
 
         return {
+          language,
           hasSabbatical,
           mainEventTitle,
           sabbaticalDate,
@@ -1178,44 +1359,23 @@
         return merged;
       }
 
+      function splitDuration(ms) {
+        const safe = Math.max(0, ms);
+        const totalSeconds = Math.floor(safe / 1000);
+        return {
+          days: Math.floor(totalSeconds / 86400),
+          hours: String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, "0"),
+          minutes: String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0"),
+          seconds: String(totalSeconds % 60).padStart(2, "0"),
+        };
+      }
+
       function formatDuration(ms) {
-        if (ms <= 0) {
-          return "0 jour 00h 00m 00s";
-        }
-
-        const totalSeconds = Math.floor(ms / 1000);
-        const days = Math.floor(totalSeconds / 86400);
-        const hours = Math.floor((totalSeconds % 86400) / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        return `${days} ${days > 1 ? "jours" : "jour"} ${String(hours).padStart(
-          2,
-          "0"
-        )}h ${String(minutes).padStart(2, "0")}m ${String(seconds).padStart(2, "0")}s`;
+        return t("duration", splitDuration(ms));
       }
 
       function formatMainCountdown(ms) {
-        if (ms <= 0) {
-          return `0 <span class="t-unit">jours</span> 00 <span class="t-unit">heures</span> 00 <span class="t-unit">minutes</span> 00 <span class="t-unit">secondes</span>`;
-        }
-
-        const totalSeconds = Math.floor(ms / 1000);
-        const days = Math.floor(totalSeconds / 86400);
-        const hours = Math.floor((totalSeconds % 86400) / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        return `${days} <span class="t-unit">jours</span> ${String(hours).padStart(
-          2,
-          "0"
-        )} <span class="t-unit">heures</span> ${String(minutes).padStart(
-          2,
-          "0"
-        )} <span class="t-unit">minutes</span> ${String(seconds).padStart(
-          2,
-          "0"
-        )} <span class="t-unit">secondes</span>`;
+        return t("mainCountdown", splitDuration(ms));
       }
 
       function getLastWorkingMomentBeforeDate(date, personalLeaves) {
@@ -1292,12 +1452,26 @@
         return total;
       }
 
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function photoAltOrDefault(photo) {
+        return photo.alt && photo.alt.trim()
+          ? photo.alt
+          : t("backgroundPhotoAltDefault");
+      }
+
       function renderPeriodList() {
         const periods = state.draftSettings.vacationPeriods;
 
         if (!periods.length) {
-          elements.periodList.innerHTML =
-            '<div class="empty-state">Aucune periode configuree pour le moment.</div>';
+          elements.periodList.innerHTML = `<div class="empty-state">${escapeHtml(t("noPeriodsEmpty"))}</div>`;
           return;
         }
 
@@ -1311,10 +1485,10 @@
             return `
               <div class="period-list-item">
                 <div class="period-meta">
-                  <div class="period-title">${formatShortFrenchDate(start)} - ${formatShortFrenchDate(end)}</div>
-                  <div class="period-subtitle">${totalDays} ${totalDays > 1 ? "jours" : "jour"} calendaires</div>
+                  <div class="period-title">${escapeHtml(formatLongDate(start))} - ${escapeHtml(formatLongDate(end))}</div>
+                  <div class="period-subtitle">${escapeHtml(t("calendarDays", { days: totalDays }))}</div>
                 </div>
-                <button class="button-secondary" type="button" data-remove-period="${index}">Supprimer</button>
+                <button class="button-secondary" type="button" data-remove-period="${index}">${escapeHtml(t("removeButton"))}</button>
               </div>
             `;
           })
@@ -1325,25 +1499,74 @@
         const photos = state.draftSettings.photos;
 
         if (!photos.length) {
-          elements.photoList.innerHTML =
-            '<div class="empty-state">Aucune photo configuree pour le moment.</div>';
+          elements.photoList.innerHTML = `<div class="empty-state">${escapeHtml(t("noPhotosEmpty"))}</div>`;
           return;
         }
 
         elements.photoList.innerHTML = photos
-          .map(
-            (photo, index) => `
+          .map((photo, index) => {
+            const alt = photoAltOrDefault(photo);
+            return `
               <div class="photo-item">
-                <img class="photo-preview" src="${photo.src}" alt="${photo.alt}" />
+                <img class="photo-preview" src="${escapeHtml(photo.src)}" alt="${escapeHtml(alt)}" />
                 <div class="period-meta">
-                  <div class="period-title">${photo.alt}</div>
-                  <div class="period-subtitle">${photo.src}</div>
+                  <div class="period-title">${escapeHtml(alt)}</div>
+                  <div class="period-subtitle">${escapeHtml(photo.src)}</div>
                 </div>
-                <button class="button-secondary" type="button" data-remove-photo="${index}">Supprimer</button>
+                <button class="button-secondary" type="button" data-remove-photo="${index}">${escapeHtml(t("removeButton"))}</button>
               </div>
-            `
-          )
+            `;
+          })
           .join("");
+      }
+
+      function renderLanguageSwitcher() {
+        elements.languageSwitcher.innerHTML = SUPPORTED_LANGUAGES.map((lang) => {
+          const dict = TRANSLATIONS[lang];
+          const aria = t("languageFlagAria", { name: dict.name });
+          const isActive = lang === state.settings.language;
+          return `<button type="button" class="lang-flag${isActive ? " is-active" : ""}" data-language="${lang}" aria-label="${escapeHtml(aria)}" aria-pressed="${isActive}" title="${escapeHtml(dict.name)}">${dict.flagSvg}</button>`;
+        }).join("");
+      }
+
+      function applyStaticTranslations() {
+        document.querySelectorAll("[data-i18n]").forEach((node) => {
+          const key = node.getAttribute("data-i18n");
+          node.textContent = t(key);
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+          const key = node.getAttribute("data-i18n-placeholder");
+          node.setAttribute("placeholder", t(key));
+        });
+        document.querySelectorAll("[data-i18n-aria-label]").forEach((node) => {
+          const key = node.getAttribute("data-i18n-aria-label");
+          node.setAttribute("aria-label", t(key));
+        });
+
+        elements.htmlRoot.setAttribute("lang", state.settings.language);
+        document.title = t("pageTitle");
+      }
+
+      function applyTranslations() {
+        applyStaticTranslations();
+        renderLanguageSwitcher();
+        rebuildVacationPicker();
+
+        if (state.draftSettings) {
+          renderPeriodList();
+          renderPhotoList();
+        }
+      }
+
+      function setLanguage(lang) {
+        if (!SUPPORTED_LANGUAGES.includes(lang) || lang === state.settings.language) {
+          return;
+        }
+
+        saveSettings({ ...state.settings, language: lang });
+        applyTranslations();
+        renderSlides();
+        tick();
       }
 
       function updateSabbaticalFieldState() {
@@ -1440,6 +1663,7 @@
           elements.mainEventTitleInput.value.trim() || DEFAULT_SETTINGS.mainEventTitle;
         state.draftSettings.sabbaticalDate =
           elements.sabbaticalDateInput.value || DEFAULT_SETTINGS.sabbaticalDate;
+        state.draftSettings.language = state.settings.language;
         saveSettings(state.draftSettings);
         renderSlides();
         closeSettingsModal();
@@ -1447,7 +1671,10 @@
       }
 
       function resetDraftSettings() {
-        state.draftSettings = normalizeSettings(DEFAULT_SETTINGS);
+        state.draftSettings = normalizeSettings({
+          ...DEFAULT_SETTINGS,
+          language: state.settings.language,
+        });
         elements.hasSabbaticalInput.checked = state.draftSettings.hasSabbatical;
         elements.mainEventTitleInput.value = state.draftSettings.mainEventTitle;
         elements.sabbaticalDateInput.value = state.draftSettings.sabbaticalDate;
@@ -1463,7 +1690,7 @@
 
       function addDraftPhoto() {
         const src = elements.photoUrlInput.value.trim();
-        const alt = elements.photoAltInput.value.trim() || "Photo de fond";
+        const alt = elements.photoAltInput.value.trim();
 
         if (!src) {
           return;
@@ -1519,8 +1746,8 @@
           elements.vacationLine.classList.remove("is-featured");
         } else {
           elements.mainTitle.textContent = nextVacation
-            ? "Depart en conge dans..."
-            : "Aucune prochaine periode";
+            ? t("nextVacationTitle")
+            : t("noUpcomingPeriod");
           elements.timer.innerHTML = nextVacation
             ? formatMainCountdown(
                 Math.max(0, nextVacation.lastWorkingMoment - now)
@@ -1537,9 +1764,9 @@
             derived.personalLeaves
           );
 
-          elements.vacationLabel.textContent = `Reste a travailler avant ${nextVacation.days} ${
-            nextVacation.days > 1 ? "jours" : "jour"
-          } de vacances :`;
+          elements.vacationLabel.textContent = t("vacationLabel", {
+            days: nextVacation.days,
+          });
           elements.vacationCountdown.textContent = formatDuration(remaining);
           elements.vacationLine.classList.remove("hidden");
         } else {
@@ -1589,6 +1816,13 @@
           state.draftSettings.photos.splice(index, 1);
           renderPhotoList();
         });
+        elements.languageSwitcher.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-language]");
+          if (!button) {
+            return;
+          }
+          setLanguage(button.getAttribute("data-language"));
+        });
         document.addEventListener("keydown", (event) => {
           if (event.key === "Escape" && !elements.settingsModal.classList.contains("hidden")) {
             closeSettingsModal();
@@ -1596,11 +1830,21 @@
         });
       }
 
-      function initVacationPicker() {
+      function rebuildVacationPicker() {
+        if (state.vacationPicker) {
+          state.vacationPicker.destroy();
+        }
+
+        const localeKey = t("flatpickrLocale");
+        const locale =
+          localeKey && localeKey !== "default" && flatpickr.l10ns[localeKey]
+            ? flatpickr.l10ns[localeKey]
+            : flatpickr.l10ns.default;
+
         state.vacationPicker = flatpickr(elements.vacationRangeInput, {
           mode: "range",
           dateFormat: "Y-m-d",
-          locale: flatpickr.l10ns.fr,
+          locale,
         });
       }
 
@@ -1609,7 +1853,7 @@
         elements.slideshowContainer.innerHTML = photos
           .map(
             (photo) =>
-              `<img class="slide" src="${photo.src}" alt="${photo.alt}" />`
+              `<img class="slide" src="${escapeHtml(photo.src)}" alt="${escapeHtml(photoAltOrDefault(photo))}" />`
           )
           .join("");
         state.slideshowIndex = 0;
@@ -1639,7 +1883,9 @@
         state.slideshowTimer = setInterval(showSlide, 5000);
       }
 
-      initVacationPicker();
+      applyStaticTranslations();
+      renderLanguageSwitcher();
+      rebuildVacationPicker();
       initSettingsEvents();
       renderSlides();
       tick();
