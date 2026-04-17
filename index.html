@@ -459,6 +459,80 @@
       .flatpickr-calendar {
         background: #101723;
         box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        color: var(--text-main);
+      }
+
+      .flatpickr-calendar.arrowTop::before,
+      .flatpickr-calendar.arrowBottom::before {
+        border-bottom-color: #101723;
+        border-top-color: #101723;
+      }
+
+      .flatpickr-calendar.arrowTop::after,
+      .flatpickr-calendar.arrowBottom::after {
+        border-bottom-color: #101723;
+        border-top-color: #101723;
+      }
+
+      .flatpickr-months,
+      .flatpickr-months .flatpickr-month,
+      .flatpickr-current-month,
+      .flatpickr-weekdays,
+      span.flatpickr-weekday {
+        background: transparent;
+        color: var(--text-main);
+        fill: var(--text-main);
+      }
+
+      .flatpickr-current-month .flatpickr-monthDropdown-months,
+      .flatpickr-current-month input.cur-year {
+        color: var(--text-main);
+        background: transparent;
+      }
+
+      .flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+        background: #101723;
+        color: var(--text-main);
+      }
+
+      .flatpickr-months .flatpickr-prev-month,
+      .flatpickr-months .flatpickr-next-month {
+        color: var(--text-main);
+        fill: var(--text-main);
+      }
+
+      .flatpickr-months .flatpickr-prev-month:hover svg,
+      .flatpickr-months .flatpickr-next-month:hover svg {
+        fill: var(--accent);
+      }
+
+      .flatpickr-day {
+        color: var(--text-main);
+      }
+
+      .flatpickr-day.today {
+        border-color: var(--accent);
+      }
+
+      .flatpickr-day:hover,
+      .flatpickr-day:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+
+      .flatpickr-day.flatpickr-disabled,
+      .flatpickr-day.flatpickr-disabled:hover,
+      .flatpickr-day.prevMonthDay,
+      .flatpickr-day.nextMonthDay {
+        color: rgba(232, 236, 246, 0.32);
+      }
+
+      .numInputWrapper span.arrowUp::after {
+        border-bottom-color: var(--text-main);
+      }
+
+      .numInputWrapper span.arrowDown::after {
+        border-top-color: var(--text-main);
       }
 
       .flatpickr-day.selected,
@@ -628,7 +702,7 @@
             <section class="setting-card">
               <div class="setting-header">
                 <div>
-                  <h3>Annee sabbatique</h3>
+                  <h3>Evenement principal</h3>
                   <p>
                     Active ou non une date cible. Si elle est desactivee, la page
                     met en avant les prochaines vacances.
@@ -638,6 +712,11 @@
                   <input id="hasSabbaticalInput" type="checkbox" />
                   <span>Activer</span>
                 </label>
+              </div>
+
+              <div id="mainEventTitleField" class="field">
+                <label for="mainEventTitleInput">Titre affiche</label>
+                <input id="mainEventTitleInput" type="text" />
               </div>
 
               <div id="sabbaticalDateField" class="field">
@@ -730,6 +809,7 @@
 
       const DEFAULT_SETTINGS = {
         hasSabbatical: true,
+        mainEventTitle: "Année sabbatique dans...",
         sabbaticalDate: "2026-05-31",
         vacationPeriods: [
           { start: "20260323", end: "20260327" },
@@ -775,6 +855,8 @@
         datesSettingsPanel: document.getElementById("datesSettingsPanel"),
         imagesSettingsPanel: document.getElementById("imagesSettingsPanel"),
         hasSabbaticalInput: document.getElementById("hasSabbaticalInput"),
+        mainEventTitleField: document.getElementById("mainEventTitleField"),
+        mainEventTitleInput: document.getElementById("mainEventTitleInput"),
         sabbaticalDateField: document.getElementById("sabbaticalDateField"),
         sabbaticalDateInput: document.getElementById("sabbaticalDateInput"),
         vacationRangeInput: document.getElementById("vacationRangeInput"),
@@ -949,6 +1031,10 @@
           typeof safe.hasSabbatical === "boolean"
             ? safe.hasSabbatical
             : DEFAULT_SETTINGS.hasSabbatical;
+        const mainEventTitle =
+          typeof safe.mainEventTitle === "string" && safe.mainEventTitle.trim()
+            ? safe.mainEventTitle
+            : DEFAULT_SETTINGS.mainEventTitle;
         const sabbaticalDate =
           typeof safe.sabbaticalDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(safe.sabbaticalDate)
             ? safe.sabbaticalDate
@@ -975,6 +1061,7 @@
 
         return {
           hasSabbatical,
+          mainEventTitle,
           sabbaticalDate,
           vacationPeriods,
           photos: photos.length ? photos : DEFAULT_SETTINGS.photos,
@@ -1261,6 +1348,7 @@
 
       function updateSabbaticalFieldState() {
         const enabled = elements.hasSabbaticalInput.checked;
+        elements.mainEventTitleField.classList.toggle("hidden", !enabled);
         elements.sabbaticalDateField.classList.toggle("hidden", !enabled);
       }
 
@@ -1279,6 +1367,7 @@
       function openSettingsModal() {
         state.draftSettings = normalizeSettings(state.settings);
         elements.hasSabbaticalInput.checked = state.draftSettings.hasSabbatical;
+        elements.mainEventTitleInput.value = state.draftSettings.mainEventTitle;
         elements.sabbaticalDateInput.value = state.draftSettings.sabbaticalDate;
         updateSabbaticalFieldState();
         setActiveSettingsTab("dates");
@@ -1300,20 +1389,44 @@
       function addDraftVacationPeriod() {
         const selectedDates = state.vacationPicker.selectedDates;
 
-        if (selectedDates.length !== 2) {
+        if (!selectedDates.length) {
           return;
         }
 
-        const [firstDate, secondDate] = selectedDates;
+        const [firstDate, secondDate = firstDate] = selectedDates;
         const start = firstDate <= secondDate ? firstDate : secondDate;
         const end = firstDate <= secondDate ? secondDate : firstDate;
 
+        const existingLeaves = buildPersonalLeavesSet(
+          state.draftSettings.vacationPeriods
+        );
+        const newPeriods = [];
+        let chunkStart = null;
+        let chunkEnd = null;
+
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+          const key = formatYYYYMMDD(d);
+
+          if (existingLeaves.has(key)) {
+            if (chunkStart) {
+              newPeriods.push({ start: chunkStart, end: chunkEnd });
+              chunkStart = null;
+            }
+          } else {
+            if (!chunkStart) {
+              chunkStart = key;
+            }
+            chunkEnd = key;
+          }
+        }
+
+        if (chunkStart) {
+          newPeriods.push({ start: chunkStart, end: chunkEnd });
+        }
+
         state.draftSettings.vacationPeriods = normalizePeriods([
           ...state.draftSettings.vacationPeriods,
-          {
-            start: formatYYYYMMDD(start),
-            end: formatYYYYMMDD(end),
-          },
+          ...newPeriods,
         ]);
 
         renderPeriodList();
@@ -1323,6 +1436,8 @@
 
       function saveDraftSettings() {
         state.draftSettings.hasSabbatical = elements.hasSabbaticalInput.checked;
+        state.draftSettings.mainEventTitle =
+          elements.mainEventTitleInput.value.trim() || DEFAULT_SETTINGS.mainEventTitle;
         state.draftSettings.sabbaticalDate =
           elements.sabbaticalDateInput.value || DEFAULT_SETTINGS.sabbaticalDate;
         saveSettings(state.draftSettings);
@@ -1334,6 +1449,7 @@
       function resetDraftSettings() {
         state.draftSettings = normalizeSettings(DEFAULT_SETTINGS);
         elements.hasSabbaticalInput.checked = state.draftSettings.hasSabbatical;
+        elements.mainEventTitleInput.value = state.draftSettings.mainEventTitle;
         elements.sabbaticalDateInput.value = state.draftSettings.sabbaticalDate;
         updateSabbaticalFieldState();
         setActiveSettingsTab("dates");
@@ -1394,7 +1510,7 @@
             derived.personalLeaves
           );
 
-          elements.mainTitle.textContent = "Annee sabbatique dans...";
+          elements.mainTitle.textContent = state.settings.mainEventTitle;
           elements.timer.innerHTML = formatMainCountdown(sabbaticalDiff);
           elements.worktimeToSabbatical.textContent = formatDuration(
             worktimeToSabbatical
@@ -1485,9 +1601,6 @@
           mode: "range",
           dateFormat: "Y-m-d",
           locale: flatpickr.l10ns.fr,
-          disable: [
-            (date) => isHoliday(date),
-          ],
         });
       }
 
